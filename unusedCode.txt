@@ -1,0 +1,67 @@
+  
+  // method to draw the walls in the scene
+void drawWalls(long backTime, long leftTime, long rightTime, long topTime, long bottomTime) {
+  long current = millis();
+  if (current - backTime > 100) {
+    // DRAWS BACK WALL
+    //255,255,0
+    drawBox(width/2, height/2, -2*depth, 0, 0, 0, width, height, panelThickness);
+  } else {
+    drawBox(width/2, height/2, -2*depth, 255, 255, 255, width, height, panelThickness);
+  }
+  if (current - leftTime > 100) {
+    // DRAWS LEFT WALL
+    //255, 0, 0
+    drawBox(-(panelThickness/2), height/2, -depth, 0, 0, 0, panelThickness, height, 2*depth);
+  } else {
+    drawBox(-(panelThickness/2), height/2, -depth, 255, 255, 255, panelThickness, height, 2*depth);
+  }
+  if (current - rightTime > 100) {
+    // DRAWS RIGHT WALL
+    //255, 0, 255
+    drawBox(width+(panelThickness/2), height/2, -depth, 0, 0, 0, panelThickness, height, 2*depth);
+  } else {
+    drawBox(width+(panelThickness/2), height/2, -depth, 255, 255, 255, panelThickness, height, 2*depth);
+  }
+  if (current - topTime > 100) {
+    // DRAWS TOP WALL
+    // 0, 255, 0
+    drawBox(width/2, height+(panelThickness/2), -depth, 0, 0, 0, width, panelThickness, 2*depth);
+  } else {
+    drawBox(width/2, height+(panelThickness/2), -depth, 255, 255, 255, width, panelThickness, 2*depth);
+  }
+  if (current - bottomTime > 100) {
+    // DRAWS BOTTOM WALL
+    //0,255,255
+    drawBox(width/2, -(panelThickness/2), -depth, 0, 0, 0, width, panelThickness, 2*depth);
+  } else {
+    drawBox(width/2, -(panelThickness/2), -depth, 255, 255, 255, width, panelThickness, 2*depth);
+  }
+}
+  
+
+//drawWalls(backNow, leftNow, rightNow, topNow, bottomNow);
+
+
+
+  /*
+  for (int i = 0; i <= (2*depth); i+=(2*depth)/20) {
+   // draws rings down the chamber
+   drawBox(-(panelThickness/2), height/2, -i, r, g, b, panelThickness, height, panelThickness);
+   drawBox(width+(panelThickness/2), height/2, -i, r, g, b, panelThickness, height, panelThickness);
+   drawBox(width/2, -(panelThickness/2), -i, r, g, b, width, panelThickness, panelThickness);
+   drawBox(width/2, height+(panelThickness/2), -i, r, g, b, width, panelThickness, panelThickness);
+   }
+   for (int j = 0; j <= width; j += width/((width/height)*6)) {
+   // draws ceiling lines
+   drawBox(j, height+(panelThickness/2), -depth, r, g, b, panelThickness, panelThickness, 2*depth);
+   drawBox(j, -(panelThickness/2), -depth, r, g, b, panelThickness, panelThickness, 2*depth);
+   drawBox(j, height/2, -2*depth, r, g, b, panelThickness, height, panelThickness);
+   }
+   // draws wall lines
+   for (int k = 0; k <= height; k += height/((width/height)*6)) {
+   drawBox(-(panelThickness/2), k, -depth, r, g, b, panelThickness, panelThickness, 2*depth); 
+   drawBox(width+(panelThickness/2), k, -depth, r, g, b, panelThickness, panelThickness, 2*depth);
+   drawBox(width/2, k, -2*depth, r, g, b, width, panelThickness, panelThickness);
+   }
+   */
