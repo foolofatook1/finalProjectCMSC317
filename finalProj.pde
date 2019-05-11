@@ -59,6 +59,8 @@ float paddleY;
 
 PVector paddlePos;
 
+boolean MOUSE_MODE = false; //true for mouse mode and false for paddle mode
+
 SoundFile pongSound;
 SoundFile backRsound;
 SoundFile backLsound;
@@ -72,17 +74,21 @@ void setup() {
   size(800, 600, P3D);
   //fullScreen(P3D);
 
-  cam = new Capture(this, 320, 240);
-  cam.start();
+  if (MOUSE_MODE == false) {
+    cornerPoints = new ArrayList<PVector>();
 
-  opencv = new OpenCV(this, cam.width, cam.height);
+    cam = new Capture(this, 320, 240);
+    cam.start();
+
+    opencv = new OpenCV(this, cam.width, cam.height);
+
+    paddlePos = new PVector();
+
+    scaleX = width/320.0;
+    scaleY = height/240.0;
+  }
 
   noCursor();
-
-  scaleX = width/320.0;
-  scaleY = height/240.0;
-
-  paddlePos = new PVector();
 
   depth = width;
   panelThickness = width/100;
@@ -94,7 +100,6 @@ void setup() {
   reset();
 
   space = loadImage("space.jpg");
-  //space.resize(width, height);
 
   noStroke();
   noFill();
@@ -176,22 +181,41 @@ void drawPaddle(long time) {
   int g = 255;
   int b = 255;
   if (current - time > 150) {
-    // draws paddle
-    drawBox(paddleX-(width/12), paddleY, 0, r, g, b, panelThickness, height/6+(panelThickness), panelThickness);
-    drawBox(paddleX+(width/12), paddleY, 0, r, g, b, panelThickness, height/6+(panelThickness), panelThickness);
-    drawBox(paddleX, paddleY-(height/12), 0, r, g, b, width/6+(panelThickness), panelThickness, panelThickness);
-    drawBox(paddleX, paddleY+(height/12), 0, r, g, b, width/6+(panelThickness), panelThickness, panelThickness);
-    drawBox(paddleX, paddleY, 0, r, g, b, panelThickness, height/6, panelThickness);
-    drawBox(paddleX, paddleY, 0, r, g, b, width/6, panelThickness, panelThickness);
+    if (MOUSE_MODE == true) {
+      drawBox(mouseX-(width/12), mouseY, 0, r, g, b, panelThickness, height/6+(panelThickness), panelThickness);
+      drawBox(mouseX+(width/12), mouseY, 0, r, g, b, panelThickness, height/6+(panelThickness), panelThickness);
+      drawBox(mouseX, mouseY-(height/12), 0, r, g, b, width/6+(panelThickness), panelThickness, panelThickness);
+      drawBox(mouseX, mouseY+(height/12), 0, r, g, b, width/6+(panelThickness), panelThickness, panelThickness);
+      drawBox(mouseX, mouseY, 0, r, g, b, panelThickness, height/6, panelThickness);
+      drawBox(mouseX, mouseY, 0, r, g, b, width/6, panelThickness, panelThickness);
+    } else {
+      // draws paddle
+      drawBox(paddleX-(width/12), paddleY, 0, r, g, b, panelThickness, height/6+(panelThickness), panelThickness);
+      drawBox(paddleX+(width/12), paddleY, 0, r, g, b, panelThickness, height/6+(panelThickness), panelThickness);
+      drawBox(paddleX, paddleY-(height/12), 0, r, g, b, width/6+(panelThickness), panelThickness, panelThickness);
+      drawBox(paddleX, paddleY+(height/12), 0, r, g, b, width/6+(panelThickness), panelThickness, panelThickness);
+      drawBox(paddleX, paddleY, 0, r, g, b, panelThickness, height/6, panelThickness);
+      drawBox(paddleX, paddleY, 0, r, g, b, width/6, panelThickness, panelThickness);
+    }
   } else {
-    // draws paddle when hit
-    drawBox(paddleX-(width/12), paddleY, 0, r, g, b, panelThickness, height/6+(panelThickness), panelThickness);
-    drawBox(paddleX+(width/12), paddleY, 0, r, g, b, panelThickness, height/6+(panelThickness), panelThickness);
-    drawBox(paddleX, paddleY-(height/12), 0, r, g, b, width/6+(panelThickness), panelThickness, panelThickness);
-    drawBox(paddleX, paddleY+(height/12), 0, r, g, b, width/6+(panelThickness), panelThickness, panelThickness);
-    drawBox(paddleX, paddleY, 0, r, g, b, panelThickness, height/6, panelThickness);
-    drawBox(paddleX, paddleY, 0, r, g, b, width/6, panelThickness, panelThickness);
-    drawBox(paddleX, paddleY, 0, 255, 0, 255, width/6-panelThickness, height/6-panelThickness, panelThickness/2);
+    if (MOUSE_MODE == true) {
+      drawBox(mouseX-(width/12), mouseY, 0, r, g, b, panelThickness, height/6+(panelThickness), panelThickness);
+      drawBox(mouseX+(width/12), mouseY, 0, r, g, b, panelThickness, height/6+(panelThickness), panelThickness);
+      drawBox(mouseX, mouseY-(height/12), 0, r, g, b, width/6+(panelThickness), panelThickness, panelThickness);
+      drawBox(mouseX, mouseY+(height/12), 0, r, g, b, width/6+(panelThickness), panelThickness, panelThickness);
+      drawBox(mouseX, mouseY, 0, r, g, b, panelThickness, height/6, panelThickness);
+      drawBox(mouseX, mouseY, 0, r, g, b, width/6, panelThickness, panelThickness);
+      drawBox(mouseX, mouseY, 0, 255, 0, 255, width/6-panelThickness, height/6-panelThickness, panelThickness/2);
+    } else {
+      // draws paddle when hit
+      drawBox(paddleX-(width/12), paddleY, 0, r, g, b, panelThickness, height/6+(panelThickness), panelThickness);
+      drawBox(paddleX+(width/12), paddleY, 0, r, g, b, panelThickness, height/6+(panelThickness), panelThickness);
+      drawBox(paddleX, paddleY-(height/12), 0, r, g, b, width/6+(panelThickness), panelThickness, panelThickness);
+      drawBox(paddleX, paddleY+(height/12), 0, r, g, b, width/6+(panelThickness), panelThickness, panelThickness);
+      drawBox(paddleX, paddleY, 0, r, g, b, panelThickness, height/6, panelThickness);
+      drawBox(paddleX, paddleY, 0, r, g, b, width/6, panelThickness, panelThickness);
+      drawBox(paddleX, paddleY, 0, 255, 0, 255, width/6-panelThickness, height/6-panelThickness, panelThickness/2);
+    }
   }
 }
 
@@ -224,19 +248,17 @@ void drawLines() {
 
 void draw() {
 
-  //println(frameRate);
 
-  //camPic = cam.get();
-  opencv.loadImage(cam);
-  //if (frameCount%2 == 1) 
-  cornerPoints = opencv.findChessboardCorners(3, 3);
+  if (MOUSE_MODE == false) {
+    opencv.loadImage(cam);
+    cornerPoints = opencv.findChessboardCorners(3, 3);
 
-  /*
-  for (PVector p : cornerPoints) {
-   System.out.println(p);
-   }
-   System.out.println();
-   */
+    if (cornerPoints.size() >= 5) {
+      paddlePos = cornerPoints.get(4);
+      paddleX = width-(scaleX*paddlePos.x);
+      paddleY = scaleY*paddlePos.y;
+    }
+  }
 
   if (keyPressed) {
     if (key == 'r' || key == 'R') reset();
@@ -300,14 +322,27 @@ void draw() {
       if (ballPosZ < -depth) backCsound.play();
       else frontCsound.play();
     } 
-    if (ballPosZ+ballRadius >= 0 && ballPosZ-ballRadius <= 0 && // ball hit paddle
-      ballPosX-ballRadius >= mouseX-(width/12) && ballPosX+ballRadius <= mouseX+(width/12) && 
-      ballPosY-ballRadius >= mouseY-(width/12) && ballPosY+ballRadius <= mouseY+(width/12)) {
-      if (vz < 0) vz*=-1;
-      //multiplier+=0.1;
-      paddleNow = millis();
-      pongSound.play();
-    } 
+    if (MOUSE_MODE == true) {
+      if (ballPosZ+ballRadius >= 0 && ballPosZ-ballRadius <= 0 && // ball hit paddle
+        //change these to mouseX and mouseY when using mouse
+        ballPosX-ballRadius >= mouseX-(width/12) && ballPosX+ballRadius <= mouseX+(width/12) && 
+        ballPosY-ballRadius >= mouseY-(width/12) && ballPosY+ballRadius <= mouseY+(width/12)) {
+        if (vz < 0) vz*=-1;
+        //multiplier+=0.1;
+        paddleNow = millis();
+        pongSound.play();
+      }
+    } else {
+      if (ballPosZ+ballRadius >= 0 && ballPosZ-ballRadius <= 0 && // ball hit paddle
+        //change these to mouseX and mouseY when using mouse
+        ballPosX-ballRadius >= paddleX-(width/12) && ballPosX+ballRadius <= paddleX+(width/12) && 
+        ballPosY-ballRadius >= paddleY-(width/12) && ballPosY+ballRadius <= paddleY+(width/12)) {
+        if (vz < 0) vz*=-1;
+        //multiplier+=0.1;
+        paddleNow = millis();
+        pongSound.play();
+      }
+    }
     if (ballPosZ-ballRadius >= (width/4)) reset(); // ball missed paddle
   }
 
@@ -317,16 +352,18 @@ void draw() {
 
   pushMatrix();
   translate(0, 0, -2*depth);
+  //image(cam.get(), 0, 0);
   shape(spaceWall);
   popMatrix();
 
-  updateBall();
+  //prints fps
+  pushMatrix();
+  textSize(width/50); 
+  fill(255, 255, 255); 
+  text("FPS: "+int(frameRate), -(width/12), -(height/18), 0); 
+  popMatrix();
 
-  if (cornerPoints.size() >= 5) {
-    paddlePos = cornerPoints.get(5);
-    paddleX = scaleX*paddlePos.x;
-    paddleY = scaleY*paddlePos.y;
-  }
+  updateBall();
 
   drawPaddle(paddleNow);
 
