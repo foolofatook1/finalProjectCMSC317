@@ -77,15 +77,20 @@ void setup() {
   if (MOUSE_MODE == false) {
     cornerPoints = new ArrayList<PVector>();
 
-    cam = new Capture(this, 320, 240);
+    float mult = width/height;
+
+    float captureW = 320.0;
+    float captureH = captureW/mult;
+
+    cam = new Capture(this, int(captureW), int(captureH));
     cam.start();
 
     opencv = new OpenCV(this, cam.width, cam.height);
 
     paddlePos = new PVector();
 
-    scaleX = width/320.0;
-    scaleY = height/240.0;
+    scaleX = width/captureW;
+    scaleY = height/captureH;
   }
 
   noCursor();
@@ -248,7 +253,6 @@ void drawLines() {
 
 void draw() {
 
-
   if (MOUSE_MODE == false) {
     opencv.loadImage(cam);
     cornerPoints = opencv.findChessboardCorners(3, 3);
@@ -363,9 +367,50 @@ void draw() {
   text("FPS: "+int(frameRate), -(width/12), -(height/18), 0); 
   popMatrix();
 
-  updateBall();
+  //drawPaddle(paddleNow);
 
-  drawPaddle(paddleNow);
+  /*
+  for(PVector p : cornerPoints){
+   pushMatrix();
+   fill(255,255,255);
+   circle(width-(scaleX*p.x),(scaleY*p.y),20);
+   popMatrix();
+   }
+   */
+
+  if (cornerPoints.size() >= 9) {
+
+    PVector topLeftCorner = cornerPoints.get(0);
+    PVector topCenter = cornerPoints.get(1);
+    PVector topRightCorner = cornerPoints.get(2);
+    PVector midLeft = cornerPoints.get(3);
+    PVector center = cornerPoints.get(4);
+    PVector midRight = cornerPoints.get(5);
+    PVector botLeftCorner = cornerPoints.get(6);
+    PVector botCenter = cornerPoints.get(7);
+    PVector botRightCorner = cornerPoints.get(8);
+
+    //sets paddle center
+    paddleX = center.x;
+    paddleY = center.y;
+
+    //draws paddle
+    noFill();
+    strokeWeight(8);
+    stroke(255, 255, 255);
+    quad(topLeftCorner.y*scaleY, width-topLeftCorner.x*scaleX, topRightCorner.y*scaleY, width-topRightCorner.x*scaleX, 
+      botRightCorner.y*scaleY, width-botRightCorner.x*scaleX, botLeftCorner.y*scaleY, width-botLeftCorner.x*scaleX);
+    line(topCenter.y*scaleY, width-topCenter.x*scaleX, botCenter.y*scaleY, width-botCenter.x*scaleX);
+    line(midLeft.y*scaleY, width-midLeft.x*scaleX, midRight.y*scaleY, width-midRight.x*scaleX);
+    /*
+    quad(width-topLeftCorner.x*scaleX, topLeftCorner.y*scaleY, width-topRightCorner.x*scaleX, topRightCorner.y*scaleY, 
+     width-botRightCorner.x*scaleX, botRightCorner.y*scaleY, width-botLeftCorner.x*scaleX, botLeftCorner.y*scaleY);
+     line(width-topCenter.x*scaleX, topCenter.y*scaleY, width-botCenter.x*scaleX, botCenter.y*scaleY);
+     line(width-midLeft.x*scaleX, midLeft.y*scaleY, width-midRight.x*scaleX, midRight.y*scaleY);
+     */
+  }
+
+  updateBall();
 
   if (halt == false) drawBallTrackers();
 
