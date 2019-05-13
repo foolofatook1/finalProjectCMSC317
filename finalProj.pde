@@ -14,6 +14,10 @@ Capture cam;
 PImage camPic;
 PImage calib;
 ArrayList<PVector> cornerPoints;
+PVector c1;
+PVector c2;
+PVector c3;
+PVector c4;
 OpenCV opencv;
 
 int depth;
@@ -88,6 +92,11 @@ void setup() {
     opencv = new OpenCV(this, cam.width, cam.height);
 
     paddlePos = new PVector();
+
+    c1 = new PVector();
+    c2 = new PVector();
+    c3 = new PVector();
+    c4 = new PVector();
 
     scaleX = width/captureW;
     scaleY = height/captureH;
@@ -369,15 +378,6 @@ void draw() {
 
   //drawPaddle(paddleNow);
 
-  /*
-  for(PVector p : cornerPoints){
-   pushMatrix();
-   fill(255,255,255);
-   circle(width-(scaleX*p.x),(scaleY*p.y),20);
-   popMatrix();
-   }
-   */
-
   if (cornerPoints.size() >= 9) {
 
     PVector topLeftCorner = cornerPoints.get(0);
@@ -391,20 +391,38 @@ void draw() {
     PVector botRightCorner = cornerPoints.get(8);
 
     //sets paddle center
-    paddleX = center.x;
-    paddleY = center.y;
+    paddleX = center.x*scaleX;
+    paddleY = center.y*scaleY;
 
     //draws paddle
     noFill();
     strokeWeight(8);
     stroke(255, 255, 255);
-    quad(topLeftCorner.y*scaleY, width-topLeftCorner.x*scaleX, topRightCorner.y*scaleY, width-topRightCorner.x*scaleX, 
-      botRightCorner.y*scaleY, width-botRightCorner.x*scaleX, botLeftCorner.y*scaleY, width-botLeftCorner.x*scaleX);
-    line(topCenter.y*scaleY, width-topCenter.x*scaleX, botCenter.y*scaleY, width-botCenter.x*scaleX);
-    line(midLeft.y*scaleY, width-midLeft.x*scaleX, midRight.y*scaleY, width-midRight.x*scaleX);
-    /*
+
     quad(width-topLeftCorner.x*scaleX, topLeftCorner.y*scaleY, width-topRightCorner.x*scaleX, topRightCorner.y*scaleY, 
-     width-botRightCorner.x*scaleX, botRightCorner.y*scaleY, width-botLeftCorner.x*scaleX, botLeftCorner.y*scaleY);
+      width-botRightCorner.x*scaleX, botRightCorner.y*scaleY, width-botLeftCorner.x*scaleX, botLeftCorner.y*scaleY);
+    line(width-topCenter.x*scaleX, topCenter.y*scaleY, width-botCenter.x*scaleX, botCenter.y*scaleY);
+    line(width-midLeft.x*scaleX, midLeft.y*scaleY, width-midRight.x*scaleX, midRight.y*scaleY);
+
+    /*
+    quad(width-topLeftCorner.x*scaleX, topLeftCorner.y*scaleY,
+     width-topRightCorner.x*scaleX, topRightCorner.y*scaleY,
+     width-botRightCorner.x*scaleX, botRightCorner.y*scaleY, 
+     width-botLeftCorner.x*scaleX, botLeftCorner.y*scaleY);
+     line(width-topCenter.x*scaleX, topCenter.y*scaleY, width-botCenter.x*scaleX, botCenter.y*scaleY);
+     line(width-midLeft.x*scaleX, midLeft.y*scaleY, width-midRight.x*scaleX, midRight.y*scaleY);
+     */
+
+    /*
+    quad(topLeftCorner.y*scaleY, topLeftCorner.x*scaleX, topRightCorner.y*scaleY, topRightCorner.x*scaleX, 
+     botRightCorner.y*scaleY, botRightCorner.x*scaleX, botLeftCorner.y*scaleY, botLeftCorner.x*scaleX);
+     line(topCenter.y*scaleY, topCenter.x*scaleX, botCenter.y*scaleY, botCenter.x*scaleX);
+     line(midLeft.y*scaleY, midLeft.x*scaleX, midRight.y*scaleY, midRight.x*scaleX);
+     */
+
+    /*
+     quad(width-botRightCorner.x*scaleX, botRightCorner.y*scaleY, width-botLeftCorner.x*scaleX, botLeftCorner.y*scaleY,
+     width-topLeftCorner.x*scaleX, topLeftCorner.y*scaleY, width-topRightCorner.x*scaleX, topRightCorner.y*scaleY);
      line(width-topCenter.x*scaleX, topCenter.y*scaleY, width-botCenter.x*scaleX, botCenter.y*scaleY);
      line(width-midLeft.x*scaleX, midLeft.y*scaleY, width-midRight.x*scaleX, midRight.y*scaleY);
      */
