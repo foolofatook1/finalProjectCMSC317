@@ -336,8 +336,8 @@ void draw() {
       else frontCsound.play();
     } 
     if (MOUSE_MODE == true) {
+      // CONSTRAINTS IF USING MOUSE
       if (ballPosZ+ballRadius >= 0 && ballPosZ-ballRadius <= 0 && // ball hit paddle
-        //change these to mouseX and mouseY when using mouse
         ballPosX-ballRadius >= mouseX-(width/12) && ballPosX+ballRadius <= mouseX+(width/12) && 
         ballPosY-ballRadius >= mouseY-(width/12) && ballPosY+ballRadius <= mouseY+(width/12)) {
         if (vz < 0) vz*=-1;
@@ -346,8 +346,8 @@ void draw() {
         pongSound.play();
       }
     } else {
+      // CONSTRAINTS IF USING PADDLE
       if (ballPosZ+ballRadius >= 0 && ballPosZ-ballRadius <= 0 && // ball hit paddle
-        //change these to mouseX and mouseY when using mouse
         ballPosX-ballRadius >= paddleX-(width/12) && ballPosX+ballRadius <= paddleX+(width/12) && 
         ballPosY-ballRadius >= paddleY-(width/12) && ballPosY+ballRadius <= paddleY+(width/12)) {
         if (vz < 0) vz*=-1;
@@ -359,13 +359,15 @@ void draw() {
     if (ballPosZ-ballRadius >= (width/4)) reset(); // ball missed paddle
   }
 
+  //println("paddle X: "+paddleX);
+  //println("paddle Y: "+paddleY);
+
   background(0);
   lights();
   pointLight(100, 100, 100, width/2, height/2, -depth);
 
   pushMatrix();
   translate(0, 0, -2*depth);
-  //image(cam.get(), 0, 0);
   shape(spaceWall);
   popMatrix();
 
@@ -392,17 +394,39 @@ void draw() {
 
     //sets paddle center
     paddleX = center.x*scaleX;
-    paddleY = center.y*scaleY;
+    paddleY = height-center.y*scaleY;
+
+    c1.x = topLeftCorner.x*scaleX;
+    c1.y = height-topLeftCorner.y*scaleY;
+    c2.x = topRightCorner.x*scaleX;
+    c2.y = height-topRightCorner.y*scaleY;
+    c3.x = botLeftCorner.x*scaleX;
+    c3.y = height-botLeftCorner.y*scaleY;
+    c4.x = botRightCorner.x*scaleX;
+    c4.y = height-botRightCorner.y*scaleY;
 
     //draws paddle
     noFill();
-    strokeWeight(8);
-    stroke(255, 255, 255);
+    strokeWeight(6);
+    stroke(255, 0, 0);
 
+    //red is correct rotation wrong position
+    line(paddleX, paddleY, c1.x, c1.y);
+    line(paddleX, paddleY, c2.x, c2.y);
+    line(paddleX, paddleY, c3.x, c3.y);
+    line(paddleX, paddleY, c4.x, c4.y);
+    line(c1.x, c1.y, c2.x, c2.y);
+    line(c2.x, c2.y, c4.x, c4.y);
+    line(c4.x, c4.y, c3.x, c3.y);
+    line(c3.x, c3.y, c1.x, c1.y);
+
+    // blue is correct position wrong rotation
+    stroke(0, 0, 255);
     quad(width-topLeftCorner.x*scaleX, topLeftCorner.y*scaleY, width-topRightCorner.x*scaleX, topRightCorner.y*scaleY, 
       width-botRightCorner.x*scaleX, botRightCorner.y*scaleY, width-botLeftCorner.x*scaleX, botLeftCorner.y*scaleY);
     line(width-topCenter.x*scaleX, topCenter.y*scaleY, width-botCenter.x*scaleX, botCenter.y*scaleY);
     line(width-midLeft.x*scaleX, midLeft.y*scaleY, width-midRight.x*scaleX, midRight.y*scaleY);
+
 
     /*
     quad(width-topLeftCorner.x*scaleX, topLeftCorner.y*scaleY,
