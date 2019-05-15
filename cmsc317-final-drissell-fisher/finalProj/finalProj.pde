@@ -74,9 +74,19 @@ SoundFile frontLsound;
 SoundFile frontCsound;
 SoundFile backSound;
 
+/** 
+ * Tracking stuff
+ */
+ArrayList<PVector> lastLocs;
+float x_diff;
+float y_diff;
+
 void setup() {
   size(800, 600, P3D);
   //fullScreen(P3D);
+
+  // more tracking stuff
+  lastLocs = new ArrayList<PVector>();
 
   if (MOUSE_MODE == false) {
     cornerPoints = new ArrayList<PVector>();
@@ -262,14 +272,46 @@ void drawLines() {
 
 void draw() {
 
-  if (MOUSE_MODE == false) {
-    opencv.loadImage(cam);
-    cornerPoints = opencv.findChessboardCorners(3, 3);
+  opencv.loadImage(cam);
+  cornerPoints = opencv.findChessboardCorners(3, 3);
+  /* check to see if we are looking at paddle */
+  MOUSE_MODE = (cornerPoints.size() > 0)?false:true;
 
+  // found the paddle
+  if (MOUSE_MODE == false) {
     if (cornerPoints.size() >= 5) {
       paddlePos = cornerPoints.get(4);
       paddleX = width-(scaleX*paddlePos.x);
       paddleY = scaleY*paddlePos.y;
+      /* track center points */
+      lastLocs.add(paddlePos);
+      if (lastLocs.size() > 2)
+        // no need for the last last first point
+        lastLocs.remove(0);
+    }
+  }
+  
+  
+  /**
+   * When the camera can't find the paddle
+   * it continues to draw the paddle on the 
+   * same trajectory that it saw earlier.
+   */
+  if (MOUSE_MODE == true && lastLocs.size() > 1)
+  {
+    float last_x_diff = x_diff;
+    float last_y_diff = y_diff;
+    x_diff = lastLocs.get(1).x - lastLocs.get(0).x;
+    y_diff = lastLocs.get(1).y - lastLocs.get(0).y;
+    if (x_diff != 0 || y_diff != 0)
+    {
+      paddleX += x_diff;
+      paddleY += y_diff;
+    }
+    else
+    {
+      paddleX += last_x_diff;
+      paddleY += last_y_diff;
     }
   }
 
@@ -346,10 +388,15 @@ void draw() {
         pongSound.play();
       }
     } else {
+	  /**
+	   * usually divider is 12
+	   * make smaller in order to 
+	   * make game easier -- should we consider making a function to change difficulty?
+	   */
       // CONSTRAINTS IF USING PADDLE
       if (ballPosZ+ballRadius >= 0 && ballPosZ-ballRadius <= 0 && // ball hit paddle
-        ballPosX-ballRadius >= paddleX-(width/12) && ballPosX+ballRadius <= paddleX+(width/12) && 
-        ballPosY-ballRadius >= paddleY-(width/12) && ballPosY+ballRadius <= paddleY+(width/12)) {
+        ballPosX-ballRadius >= paddleX-(width/5) && ballPosX+ballRadius <= paddleX+(width/5) && 
+        ballPosY-ballRadius >= paddleY-(width/5) && ballPosY+ballRadius <= paddleY+(width/5)) {
         if (vz < 0) vz*=-1;
         //multiplier+=0.1;
         paddleNow = millis();
@@ -426,30 +473,6 @@ void draw() {
       width-botRightCorner.x*scaleX, botRightCorner.y*scaleY, width-botLeftCorner.x*scaleX, botLeftCorner.y*scaleY);
     line(width-topCenter.x*scaleX, topCenter.y*scaleY, width-botCenter.x*scaleX, botCenter.y*scaleY);
     line(width-midLeft.x*scaleX, midLeft.y*scaleY, width-midRight.x*scaleX, midRight.y*scaleY);
-
-
-    /*
-    quad(width-topLeftCorner.x*scaleX, topLeftCorner.y*scaleY,
-     width-topRightCorner.x*scaleX, topRightCorner.y*scaleY,
-     width-botRightCorner.x*scaleX, botRightCorner.y*scaleY, 
-     width-botLeftCorner.x*scaleX, botLeftCorner.y*scaleY);
-     line(width-topCenter.x*scaleX, topCenter.y*scaleY, width-botCenter.x*scaleX, botCenter.y*scaleY);
-     line(width-midLeft.x*scaleX, midLeft.y*scaleY, width-midRight.x*scaleX, midRight.y*scaleY);
-     */
-
-    /*
-    quad(topLeftCorner.y*scaleY, topLeftCorner.x*scaleX, topRightCorner.y*scaleY, topRightCorner.x*scaleX, 
-     botRightCorner.y*scaleY, botRightCorner.x*scaleX, botLeftCorner.y*scaleY, botLeftCorner.x*scaleX);
-     line(topCenter.y*scaleY, topCenter.x*scaleX, botCenter.y*scaleY, botCenter.x*scaleX);
-     line(midLeft.y*scaleY, midLeft.x*scaleX, midRight.y*scaleY, midRight.x*scaleX);
-     */
-
-    /*
-     quad(width-botRightCorner.x*scaleX, botRightCorner.y*scaleY, width-botLeftCorner.x*scaleX, botLeftCorner.y*scaleY,
-     width-topLeftCorner.x*scaleX, topLeftCorner.y*scaleY, width-topRightCorner.x*scaleX, topRightCorner.y*scaleY);
-     line(width-topCenter.x*scaleX, topCenter.y*scaleY, width-botCenter.x*scaleX, botCenter.y*scaleY);
-     line(width-midLeft.x*scaleX, midLeft.y*scaleY, width-midRight.x*scaleX, midRight.y*scaleY);
-     */
   }
 
   updateBall();
